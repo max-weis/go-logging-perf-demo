@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -79,13 +79,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 24,
-        "w": 24,
+        "h": 14,
+        "w": 11,
         "x": 0,
         "y": 0
       },
       "id": 2,
-      "interval": "1s",
       "options": {
         "legend": {
           "calcs": [],
@@ -99,30 +98,139 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",method=\"GET\",url=\"/logrus\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\",method=\"GET\",url=\"/logrus\"}[1m]))\n",
+          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",instance=\"logrus-service:8080\", method=\"GET\",url=\"/\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\", instance=\"logrus-service:8080\",method=\"GET\",url=\"/\"}[1m]))",
           "interval": "",
-          "legendFormat": "Logrus",
+          "legendFormat": "logrus",
           "refId": "A"
         },
         {
           "exemplar": true,
-          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",method=\"GET\",url=\"/zap\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\",method=\"GET\",url=\"/zap\"}[1m]))\n",
+          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",instance=\"zap-service:8080\", method=\"GET\",url=\"/\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\", instance=\"zap-service:8080\",method=\"GET\",url=\"/\"}[1m]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Zap",
+          "legendFormat": "zap",
           "refId": "B"
         },
         {
           "exemplar": true,
-          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",method=\"GET\",url=\"/zerolog\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\",method=\"GET\",url=\"/zerolog\"}[1m]))\n",
+          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",instance=\"zero-service:8080\", method=\"GET\",url=\"/\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\", instance=\"zero-service:8080\",method=\"GET\",url=\"/\"}[1m]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Zerolog",
+          "legendFormat": "zero",
           "refId": "C"
         },
         {
           "exemplar": true,
-          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",method=\"GET\",url=\"/stdlib\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\",method=\"GET\",url=\"/stdlib\"}[1m]))\n",
+          "expr": "avg(rate(echo_request_duration_seconds_sum{code=\"200\",instance=\"stdlib-service:8080\", method=\"GET\",url=\"/\"}[1m])/rate(echo_request_duration_seconds_count{code=\"200\", instance=\"stdlib-service:8080\",method=\"GET\",url=\"/\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "hide": false,
+          "refId": "E"
+        }
+      ],
+      "title": "Average Request Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 13,
+        "x": 11,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "go_memstats_alloc_bytes{instance=\"logrus-service:8080\"}/1048576",
+          "interval": "",
+          "legendFormat": "logrus",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "go_memstats_alloc_bytes{instance=\"zap-service:8080\"}/1048576",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "zap",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "go_memstats_alloc_bytes{instance=\"zero-service:8080\"}/1048576",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "zero",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "go_memstats_alloc_bytes{instance=\"stdlib-service:8080\"}/1048576",
           "hide": false,
           "interval": "",
           "legendFormat": "stdlib",
@@ -133,11 +241,11 @@
           "refId": "E"
         }
       ],
-      "title": "Panel Title",
+      "title": "Memory Usage in MB",
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": false,
   "schemaVersion": 31,
   "style": "dark",
   "tags": [],
@@ -145,12 +253,12 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Average Request Duration",
-  "uid": "jrUHIWK7z",
-  "version": 2
+  "title": "Go Logging Performance Demo Copy",
+  "uid": "B_vRxZK7z",
+  "version": 1
 }

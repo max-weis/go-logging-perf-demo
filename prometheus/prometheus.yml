@@ -6,4 +6,9 @@ scrape_configs:
   - job_name: 'prometheus'
 
     static_configs:
-      - targets: [ 'logging-perf-demo:8080' ]
+      - targets: [
+          'logrus-service:8080',
+          'zap-service:8080',
+          'zero-service:8080',
+          'stdlib-service:8080'
+      ]

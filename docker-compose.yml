@@ -17,8 +17,35 @@ services:
     ports:
       - 3000:3000
 
-  logging-perf-demo:
+  logrus-service:
     build:
       context: .
+    environment:
+      LOGGER: logrus
     ports:
       - 8080:8080
+
+  zap-service:
+    build:
+      context: .
+    environment:
+      LOGGER: zap
+    ports:
+      - 8081:8080
+
+  zero-service:
+    build:
+      context: .
+    environment:
+      LOGGER: zero
+    ports:
+      - 8082:8080
+
+  stdlib-service:
+    build:
+      context: .
+    environment:
+      LOGGER: stdlib
+    ports:
+      - 8083:8080
+

@@ -8,42 +8,64 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"log"
-	"net/http"
 	"os"
 )
 
+var (
+	zeroLogger zerolog.Logger
+	zapLogger  *zap.Logger
+)
+
 func main() {
-	zapLogger := initZap()
-	zeroLogger := initZero()
+	// init logger
+	zapLogger = initZap()
+	zeroLogger = initZero()
+
+	// init echo
 	e := echo.New()
 	c := jaegertracing.New(e, nil)
+	defer c.Close()
 	p := prometheus.NewPrometheus("echo", nil)
 	p.Use(e)
 
-	defer c.Close()
+	// set logger
+	loggerType := os.Getenv("LOGGER")
+	var handler echo.HandlerFunc
 
-	e.GET("/zerolog", func(c echo.Context) error {
-		zeroLogger.Print("zerologger")
-		return c.String(http.StatusOK, "Hello, zerolog!")
-	})
+	switch loggerType {
+	case "zap":
+		handler = zapHandler
+	case "logrus":
+		handler = logrusHandler
+	case "zero":
+		handler = zeroHandler
+	case "stdlib":
+		handler = stdlibHandler
+	}
 
-	e.GET("/zap", func(c echo.Context) error {
-		zapLogger.Info("zap")
-		return c.String(http.StatusOK, "Hello, zap!")
-	})
-
-	e.GET("/logrus", func(c echo.Context) error {
-		logrus.Print("logrus")
-		return c.String(http.StatusOK, "Hello, logrus!")
-	})
-
-	e.GET("/stdlib", func(c echo.Context) error {
-		log.Println("stdlib")
-		return c.String(http.StatusOK, "Hello, stdlib!")
-	})
+	e.GET("/", handler)
 
 	e.Logger.Fatal(e.Start(":8080"))
+}
 
+func zeroHandler(c echo.Context) error {
+	zeroLogger.Print("zerologger")
+	return nil
+}
+
+func zapHandler(c echo.Context) error {
+	zapLogger.Info("zap")
+	return nil
+}
+
+func logrusHandler(c echo.Context) error {
+	logrus.Print("logrus")
+	return nil
+}
+
+func stdlibHandler(c echo.Context) error {
+	log.Println("stdlib")
+	return nil
 }
 
 func initZero() zerolog.Logger {
